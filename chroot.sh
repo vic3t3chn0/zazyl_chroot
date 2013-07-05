@@ -1,7 +1,104 @@
 #!/bin/bash
+##############################################Begin arm System####################################################################################
+function arm_system(){
+			echo -n "choose  1 to 9:"
+
+			echo "1 - Get linaro also build chroot"
+
+			echo "2 - Download the prerequirements"
+
+			echo "3 - Create the structure of the chrooted system"
+
+			echo "4 - Create the raw image"
+
+			echo "5 - Mount raw image system"
+
+			echo "6 - Download the Pandaboard kernel"
+
+			echo "7 - Download lxde, xorg also  other tools"
+			
+			echo "8 - Copy kernel and  uboot on system dir" 
+
+			echo "9 - Create liveuser on system"
+
+
+			read c
+
+
+			case $c in
+				 '1')  
+					echo "Get linaro tool also build chroot"
+					linaro()
+					;;
+			 '2')
+				echo "Download the prerequeriments"
+				prerequirements()
+		      		;;
+		  	 '3')
+					structure_build()
+					;;
+			 '4')
+				raw_create()
+			       	;;
+	
+			 '5')	
+				echo "Mount raw image system"
+				sudo mount -o ~/zazyl_chroot/system.raw /media/zazyl_temp
+				sudo cp  ~/zazyl_chroot/system/  /media/zazyl_temp
+		     		sync;sync
+				sudo umount /media/zazyl_temp
+				sync;sync
+				;;
+	
+			 '6')
+				kernel_pandaboard()
+				;;
+
+		       	 '7')
+				echo "Download lxde, Xorg,lightdm also other tools"
+				cd zazyl_chroot/tools
+				git clone git://lxde.git.sourceforge.net/gitroot/lxde/lxde.git
+				cd lxde
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazy_chroot/system install
+				cd ~
+		 		cd  zazyl_chroot/tools
+		
+				wget https://bitbucket.org/pypy/pypy/downloads/pypy-2.0.2-src.zip >  ~/zazyl_chroot
+				unzip pypy-20.02-src.zip
+		
+				cd pypy/pypy/goal
+				pypy ../../rpython/bin/rpython -Ojit targetpypystandalone           # get the JIT version
+				pypy ../../rpython/bin/rpython -O2 targetpypystandalone             # get the no-jit version
+				pypy ../../rpython/bin/rpython -O2 --sandbox targetpypystandalone   # get the sandbox version
+				cd  ~
+				cd ~/zazyl_chroot/tools
+		
+				wget http://prdownload.berlios.de/perlcross/perl-5.16.3-cross-0.7.4.tar.gz
+				tar xvf perl-5.16.3-cross-0.7.4.tar.gz
+				cd perl-5.16.3-cross-0.7.4
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazyl_chroot/system  install
+				;;
+	
+			 '8')
+				echo "Copy kernel and  uboot  on system dir"
+		
+				sudo cp  ~/zazyl_chroot/linux/arch/arm/boot/zImage ~/zazyl_chroot/system/
+				sudo cp ~/zazyl_chroot/linux/arch/arm/boot/uboot  ~/zazyl_chroot/system/
+		
+				;;
+		      	'9')
+				echo "Create a liveuser on system"
+				adduser liveuser -g  sudo 
+				;;
+		esac
+}
 
 function linaro(){
-  		echo "Get linaro tool also build chroot"
+			echo "Get linaro tool also build chroot"
               	        mkdir  -p zazyl_chroot/tools
                 	cd zazyl_chroot && cd tools
                		wget http://releases.linaro.org/13.04/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
@@ -75,102 +172,376 @@ function kernel_pandaboard(){
 									make ARCH=arm CROSS_COMPILE=~/zazyl_chroot/tools/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux/bin/arm-linux-gnueabihf- uImage
         		 }
 
+
+
+##############################################End of ARM System###################################################################################
+
+##############################################Begin x86 System####################################################################################
+function x86_system(){
+			echo -n "choose  1 to 9:"
+
+			echo "1 - Get linaro also build chroot"
+
+			echo "2 - Download the prerequirements"
+
+			echo "3 - Create the structure of the chrooted system"
+
+			echo "4 - Create the raw image"
+
+			echo "5 - Mount raw image system"
+
+			echo "6 - Download the kernel x86"
+
+			echo "7 - Download lxde, xorg also  other tools"
+			
+			echo "8 - Copy kernel and  uboot on system dir" 
+
+			echo "9 - Create liveuser on system"
+
+
+			read c
+
+
+			case $c in
+				 '1')  
+					echo "Get linaro tool also build chroot"
+					linaro()
+					;;
+			 '2')
+				echo "Download the prerequeriments"
+				prerequirements()
+		      		;;
+		  	 '3')
+					structure_build()
+					;;
+			 '4')
+				raw_create()
+			       	;;
+	
+			 '5')	
+				echo "Mount raw image system"
+				sudo mount -o ~/zazyl_chroot/system.raw /media/zazyl_temp
+				sudo cp  ~/zazyl_chroot/system/  /media/zazyl_temp
+		     		sync;sync
+				sudo umount /media/zazyl_temp
+				sync;sync
+				;;
+	
+			 '6')
+				get_kernel()
+				;;
+
+		       	 '7')
+				echo "Download lxde, Xorg,lightdm also other tools"
+				cd zazyl_chroot/tools
+				git clone git://lxde.git.sourceforge.net/gitroot/lxde/lxde.git
+				cd lxde
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazy_chroot/system install
+				cd ~
+		 		cd  zazyl_chroot/tools
+		
+				wget https://bitbucket.org/pypy/pypy/downloads/pypy-2.0.2-src.zip >  ~/zazyl_chroot
+				unzip pypy-20.02-src.zip
+		
+				cd pypy/pypy/goal
+				pypy ../../rpython/bin/rpython -Ojit targetpypystandalone           # get the JIT version
+				pypy ../../rpython/bin/rpython -O2 targetpypystandalone             # get the no-jit version
+				pypy ../../rpython/bin/rpython -O2 --sandbox targetpypystandalone   # get the sandbox version
+				cd  ~
+				cd ~/zazyl_chroot/tools
+		
+				wget http://prdownload.berlios.de/perlcross/perl-5.16.3-cross-0.7.4.tar.gz
+				tar xvf perl-5.16.3-cross-0.7.4.tar.gz
+				cd perl-5.16.3-cross-0.7.4
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazyl_chroot/system  install
+				;;
+	
+			 '8')
+				echo "Copy kernel and  uboot  on system dir"
+		
+				sudo cp  ~/zazyl_chroot/linux/arch/arm/boot/zImage ~/zazyl_chroot/system/
+				sudo cp ~/zazyl_chroot/linux/arch/arm/boot/uboot  ~/zazyl_chroot/system/
+		
+				;;
+		      	'9')
+				echo "Create a liveuser on system"
+				adduser liveuser -g  sudo 
+				;;
+		esac
+}
+
+function linaro(){
+			echo "Get linaro tool also build chroot"
+              	        mkdir  -p zazyl_chroot/tools
+                	cd zazyl_chroot && cd tools
+               		wget http://releases.linaro.org/13.04/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
+			cd ~/zazyl_chroot/tools
+                	tar xvf  gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2 
+                	export ARCH=arm
+                	export CROSS_COMPILE=~/zazyl_chroot/tools/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415/bin/arm-linux-gnueabihf-
+               		export PATH=~/zazyl_chroot/tools/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415/bin/:$PATH
+                }
+
+function prerequirements(){
+				 sudo apt-get install -y  build-essential qt-sdk bison flex automake autoconf git gcc-4.6 g++-4.6 *-4.6-multilib
+}
+
+function structure_build(){
+			echo "Create the structure of the chrooted system"
+			cd zazyl_chroot
+			mkdir -p system_x86/etc
+			mkdir -p system_x86/var
+			mkdir -p system_x86/opt
+			mkdir -p system_x86/home
+	                mkdir -p system_x86/bin
+			mkdir -p system_x86/xbin
+	                mkdir -p system_x86/boot
+			mkdir -p system_x86/dev/dhpcd
+			mkdir -p system_x86/dev/wifi
+			mkdir -p system_x86/dev/security
+			mkdir -p system_x86/dev/permissions
+			mkdir -p system_x86/lib/drm
+			mkdir -p system_x86/lib/egl
+			mkdir -p system_x86/lib/hw
+			mkdir -p system_x86/lib/soundfx
+			mkdir -p system_x86/cdrom
+	    		mkdir -p system_x86/proc
+			mkdir -p system_x86/media
+			mkdir -p system_x86/usr
+			mkdir -p system_x86/var
+	    		mkdir -p system_x86/root
+			mkdir -p system_x86/run
+			mkdir -p system_x86/sbin
+			mkdir -p system_x86/selinux
+			mkdir -p system_x86/srv
+			mkdir -p system_x86/mnt
+			mkdir -p system_x86/sys
+			mkdir -p system_x86/lib
+			mkdir -p system_x86/tmp
+			mkdir -p system_x86/lost+found
+	                mkdir -p system_x86/libx32
+			mkdir -p system_x86/lib32
+	
+
+}
+
+function raw_create(){
+							echo "create the raw image"
+		
+							sudo dd if=/dev/zero of=~/zazyl_chroot/system.raw bs=1024  count=0 seek=1024
+                					sudo mkdir /media/zazyl_temp
+}
+
+function get_kernel(){  
+			mkdir -p zazyl_chroot/system_86
+			cd zazyl_chroot && cd tools
+			wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.9.9.tar.xz
+			tar linux-3.9.9.tar.xz
+			cd linux-3.9.9
+			make oldconfig
+			make -O=~/zazyl_chroot/system_x86
+			make install
+}
+
+############################################END of x86 System#####################################################################################
+############################################BEGIN of x86_64 System################################################################################
+function x86_64_system(){
+			echo -n "choose  1 to 9:"
+
+			echo "1 - Get linaro also build chroot"
+
+			echo "2 - Download the prerequirements"
+
+			echo "3 - Create the structure of the chrooted system"
+
+			echo "4 - Create the raw image"
+
+			echo "5 - Mount raw image system"
+
+			echo "6 - Download the kernel x86_64"
+
+			echo "7 - Download lxde, xorg also  other tools"
+			
+			echo "8 - Copy kernel and  uboot on system dir" 
+
+			echo "9 - Create liveuser on system"
+
+
+			read c
+
+
+			case $c in
+				 '1')  
+					echo "Get linaro tool also build chroot"
+					linaro()
+					;;
+			 '2')
+				echo "Download the prerequeriments"
+				prerequirements()
+		      		;;
+		  	 '3')
+					structure_build()
+					;;
+			 '4')
+				raw_create()
+			       	;;
+	
+			 '5')	
+				echo "Mount raw image system"
+				sudo mount -o ~/zazyl_chroot/system.raw /media/zazyl_temp
+				sudo cp  ~/zazyl_chroot/system/  /media/zazyl_temp
+		     		sync;sync
+				sudo umount /media/zazyl_temp
+				sync;sync
+				;;
+	
+			 '6')
+				kernel_pandaboard()
+				;;
+
+		       	 '7')
+				echo "Download lxde, Xorg,lightdm also other tools"
+				cd zazyl_chroot/tools
+				git clone git://lxde.git.sourceforge.net/gitroot/lxde/lxde.git
+				cd lxde
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazy_chroot/system install
+				cd ~
+		 		cd  zazyl_chroot/tools
+		
+				wget https://bitbucket.org/pypy/pypy/downloads/pypy-2.0.2-src.zip >  ~/zazyl_chroot
+				unzip pypy-20.02-src.zip
+		
+				cd pypy/pypy/goal
+				pypy ../../rpython/bin/rpython -Ojit targetpypystandalone           # get the JIT version
+				pypy ../../rpython/bin/rpython -O2 targetpypystandalone             # get the no-jit version
+				pypy ../../rpython/bin/rpython -O2 --sandbox targetpypystandalone   # get the sandbox version
+				cd  ~
+				cd ~/zazyl_chroot/tools
+		
+				wget http://prdownload.berlios.de/perlcross/perl-5.16.3-cross-0.7.4.tar.gz
+				tar xvf perl-5.16.3-cross-0.7.4.tar.gz
+				cd perl-5.16.3-cross-0.7.4
+				./configure --prefix=~/zazyl_chroot --target=arm
+				make
+				make DESTDIR=~/zazyl_chroot/system  install
+				;;
+	
+			 '8')
+				echo "Copy kernel and  uboot  on system dir"
+		
+				sudo cp  ~/zazyl_chroot/linux/arch/arm/boot/zImage ~/zazyl_chroot/system/
+				sudo cp ~/zazyl_chroot/linux/arch/arm/boot/uboot  ~/zazyl_chroot/system/
+		
+				;;
+		      	'9')
+				echo "Create a liveuser on system"
+				adduser liveuser -g  sudo 
+				;;
+		esac
+}
+
+function linaro(){
+			echo "Get linaro tool also build chroot"
+              	        mkdir  -p zazyl_chroot/tools
+                	cd zazyl_chroot && cd tools
+               		wget http://releases.linaro.org/13.04/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
+			cd ~/zazyl_chroot/tools
+                	tar xvf  gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2 
+                	export ARCH=arm
+                	export CROSS_COMPILE=~/zazyl_chroot/tools/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415/bin/arm-linux-gnueabihf-
+               		export PATH=~/zazyl_chroot/tools/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415/bin/:$PATH
+                }
+
+function prerequirements(){
+				 sudo apt-get install -y  build-essential qt-sdk bison flex automake autoconf git gcc-4.6 g++-4.6 *-4.6-multilib
+}
+
+function structure_build(){
+			echo "Create the structure of the chrooted system"
+			cd zazyl_chroot
+			mkdir -p system64/etc
+			mkdir -p system64/var
+			mkdir -p system64/opt
+			mkdir -p system64/home
+	                mkdir -p system64/bin
+			mkdir -p system64/xbin
+	                mkdir -p system64/boot
+			mkdir -p system64/dev/dhpcd
+			mkdir -p system64/dev/wifi
+			mkdir -p system64/dev/security
+			mkdir -p system64/dev/permissions
+			mkdir -p system64/lib/drm
+			mkdir -p system64/lib/egl
+			mkdir -p system64/lib/hw
+			mkdir -p system64/lib/soundfx
+			mkdir -p system64/cdrom
+	    		mkdir -p system64/proc
+			mkdir -p system64/media
+			mkdir -p system64/usr
+			mkdir -p system64/var
+	    		mkdir -p system64/root
+			mkdir -p system64/run
+			mkdir -p system64/sbin
+			mkdir -p system64/selinux
+			mkdir -p system64/srv
+			mkdir -p system64/mnt
+			mkdir -p system64/sys
+			mkdir -p system64/lib
+			mkdir -p system64/tmp
+			mkdir -p system64/lost+found
+	                mkdir -p system64/libx32
+			mkdir -p system64/lib32
+	
+
+}
+
+function raw_create(){
+							echo "create the raw image"
+		
+							sudo dd if=/dev/zero of=~/zazyl_chroot/system.raw bs=1024  count=0 seek=1024
+                					sudo mkdir /media/zazyl_temp
+}
+
+function get_kernel64(){
+			mkdir -p ~/zazyl_chroot/system64
+			cd zazyl_chroot && cd tools
+			wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.9.9.tar.xz
+			tar linux-3.9.9.tar.xz
+			cd linux-3.9.9
+			make oldconfig
+			make -O=~/zazyl_chroot/system64
+			make install
+			
+#########################################################End of x86_64 System########################################################################
+
 echo "welcome to zazyl build"
 
 echo "Hi , starting ... to build..."
 			
-	echo -n "choose  1 to 9:"
+echo -n "Choose one of the options..."
 
-	echo "1 - Get linaro also build chroot"
+echo "x86 - Build an intel i686 compatible version"
 
-	echo "2 - Download the prerequirements"
+echo "x86_64 - Build an intel x86_64 compatible version"
 
-	echo "3 - Create the structure of the chrooted system"
-
-	echo "4 - Create the raw image"
-
-	echo "5 - Mount raw image system"
-
-	echo "6 - Download the Pandaboard kernel"
-
-	echo "7 - Download lxde, xorg also  other tools"
-
-	echo "8 - Copy kernel and  uboot on system dir" 
-
-	echo "9 - Create liveuser on system"
-
-
-read c
-
-
-case $c in
-	 '1')  
-		echo "Get linaro tool also build chroot"
-		linaro()
-		;;
-	 '2')
-		echo "Download the prerequeriments"
-		prerequirements()
-      		;;
-  	 '3')
-			structure_build()
-			;;
-	 '4')
-		raw_create()
-               	;;
+echo "arm - Build an armv7-neon compatible version"
 	
-	 '5')	
-		echo "Mount raw image system"
-		sudo mount -o ~/zazyl_chroot/system.raw /media/zazyl_temp
-		sudo cp  ~/zazyl_chroot/system/  /media/zazyl_temp
-     		sync;sync
-		sudo umount /media/zazyl_temp
-		sync;sync
-		;;
-	
-	 '6')
-		kernel_pandaboard()
-		;;
+read f
 
-       	 '7')
-		echo "Download lxde, Xorg,lightdm also other tools"
-		cd zazyl_chroot/tools
-		git clone git://lxde.git.sourceforge.net/gitroot/lxde/lxde.git
-		cd lxde
-		./configure --prefix=~/zazyl_chroot --target=arm
-		make
-		make DESTDIR=~/zazy_chroot/system install
-		cd ~
- 		cd  zazyl_chroot/tools
-		
-		wget https://bitbucket.org/pypy/pypy/downloads/pypy-2.0.2-src.zip >  ~/zazyl_chroot
-		unzip pypy-20.02-src.zip
-		
-		cd pypy/pypy/goal
-		pypy ../../rpython/bin/rpython -Ojit targetpypystandalone           # get the JIT version
-		pypy ../../rpython/bin/rpython -O2 targetpypystandalone             # get the no-jit version
-		pypy ../../rpython/bin/rpython -O2 --sandbox targetpypystandalone   # get the sandbox version
-		cd  ~
-		cd ~/zazyl_chroot/tools
-		
-		wget http://prdownload.berlios.de/perlcross/perl-5.16.3-cross-0.7.4.tar.gz
-		tar xvf perl-5.16.3-cross-0.7.4.tar.gz
-		cd perl-5.16.3-cross-0.7.4
-		./configure --prefix=~/zazyl_chroot --target=arm
-		make
-		make DESTDIR=~/zazyl_chroot/system  install
+case $f in
+	"x86")	
+		x86_system()
 		;;
-	
-	 '8')
-		echo "Copy kernel and  uboot  on system dir"
-		
-		sudo cp  ~/zazyl_chroot/linux/arch/arm/boot/zImage ~/zazyl_chroot/system/
-		sudo cp ~/zazyl_chroot/linux/arch/arm/boot/uboot  ~/zazyl_chroot/system/
-		
+	"x86_64")
+		x86_64_system()
 		;;
-      	'9')
-		echo "Create a liveuser on system"
-		adduser liveuser -g  sudo 
+	"arm")	arm_system()
 		;;
 esac
 
